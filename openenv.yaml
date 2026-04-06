@@ -1,0 +1,62 @@
+resources_servers:
+  openenv:
+    entrypoint: server/app.py
+    domain: algorithmic-trading
+    verified: false
+
+env_class: zerodha_trading_env.environment.ZerodhaTradingEnv
+action_class: zerodha_trading_env.models.TradingAction
+observation_class: zerodha_trading_env.models.TradingObservation
+is_mcp: false
+
+metadata:
+  name: Zerodha Trading Environment
+  version: 0.1.0
+  description: >
+    A historical replay environment for training trading agents on real Zerodha
+    instrument data across Equity, Futures & Options, and Commodity segments.
+    The agent manages positions by opening, closing, modifying, and hedging trades
+    across 72 instruments. Reward is capital efficiency: P&L normalized by margin used.
+  author: Avinash Malothu
+  license: MIT
+  tags:
+    - trading
+    - finance
+    - zerodha
+    - commodities
+    - futures
+    - replay
+
+tasks:
+  - id: task_1_single_trade
+    name: Single Trade Efficiency
+    difficulty: easy
+    description: >
+      The agent is given a single instrument (e.g. GOLD26JUNFUT) with 50 candles
+      of OHLCV history. It must decide to open a long or short position at the right
+      candle, set a stoploss and target, and close the position before the episode ends.
+      Scored on capital efficiency of that single trade.
+    max_steps: 20
+    initial_capital: 500000
+
+  - id: task_2_portfolio
+    name: Multi-Position Portfolio Management
+    difficulty: medium
+    description: >
+      The agent manages up to 5 concurrent positions across different instruments
+      and segments (EQ + COM). It must open, hold, modify, and close positions over
+      100 candles, balancing risk across the portfolio. Scored on portfolio-level
+      capital efficiency with a drawdown penalty.
+    max_steps: 50
+    initial_capital: 2000000
+
+  - id: task_3_full_session
+    name: Full Trading Session
+    difficulty: hard
+    description: >
+      The agent runs a full simulated trading session across all 72 instruments
+      over 200 candles. It must manage capital allocation, avoid margin breaches,
+      react to stoploss triggers, and maximize capital efficiency across the session.
+      Scored on final capital efficiency with volatility and drawdown penalties.
+    max_steps: 100
+    initial_capital: 5000000
